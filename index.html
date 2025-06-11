@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Formularz badania ECHO</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 p-4">
+  <div class="max-w-4xl mx-auto py-6 bg-white shadow-lg rounded-lg">
+    <header class="flex flex-col md:flex-row items-center mb-6">
+      <img src="logo_szpitala.png" alt="Logo szpitala" class="h-16 mr-4 mb-4 md:mb-0">
+      <div>
+        <h1 class="text-2xl font-bold">Klinika Kardiologii z Pododdziałem Ostrych Zespołów Wieńcowych</h1>
+        <p>Kliniczny Szpital Wojewódzki Nr 2 im. Św. Jadwigi Królowej w Rzeszowie</p>
+        <p>ul. Lwowska 60, 35-301 Rzeszów</p>
+      </div>
+    </header>
+    <form id="echoForm" class="space-y-6">
+      <!-- Section 1 -->
+      <fieldset class="border p-4 rounded"><legend class="font-semibold">1. Dane pacjenta</legend>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <label class="block text-sm">Imię i nazwisko<br><input name="patientName" type="text" class="mt-1 w-full border rounded p-2" required></label>
+          <label class="block text-sm">Nr badania / ID pacjenta<br><input name="patientID" type="text" class="mt-1 w-full border rounded p-2" required></label>
+          <label class="block text-sm">Data badania<br><input name="examDate" type="date" class="mt-1 w-full border rounded p-2" required></label>
+          <label class="block text-sm">Operator / lekarz<br><input name="operator" type="text" class="mt-1 w-full border rounded p-2" required></label>
+        </div>
+      </fieldset>
+      <!-- Section 2 -->
+      <fieldset class="border p-4 rounded"><legend class="font-semibold">2. Wymiary jam serca (M-mode / 2D)</legend>
+        <div id="dims" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4"></div>
+      </fieldset>
+      <!-- Section 3 -->
+      <fieldset class="border p-4 rounded"><legend class="font-semibold">3. Średnice pni naczyniowych</legend>
+        <div id="ves" class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4"></div>
+      </fieldset>
+      <!-- Section 4 -->
+      <fieldset class="border p-4 rounded"><legend class="font-semibold">4. Objętości i funkcja skurczowa</legend>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+          <label class="block text-sm">EF [%]<br><input name="EF" type="number" step="any" class="mt-1 w-full border rounded p-2" required></label>
+          <label class="block text-sm">EDV [ml]<br><input name="EDV" type="number" step="any" class="mt-1 w-full border rounded p-2"></label>
+          <label class="block text-sm">ESV [ml]<br><input name="ESV" type="number" step="any" class="mt-1 w-full border rounded p-2"></label>
+        </div>
+      </fieldset>
+      <!-- Section 5 -->
+      <fieldset class="border p-4 rounded"><legend class="font-semibold">5. Odcinkowe zaburzenia kurczliwości</legend>
+        <div class="flex items-center mt-4"><input type="checkbox" name="segmentalPresent" id="segmentalPresent" class="form-checkbox"><label for="segmentalPresent" class="ml-2 text-sm">Obecne</label></div>
+        <label class="block text-sm mt-4">Opis segmentów / uwagi<br><textarea name="segmentalDescription" rows="3" class="mt-1 w-full border rounded p-2"></textarea></label>
+      </fieldset>
+      <!-- Section 6 -->
+      <fieldset class="border p-4 rounded"><legend class="font-semibold">6. TAPSE</legend>
+        <label class="block text-sm mt-4">Wartość [mm]<br><input name="TAPSE" type="number" step="any" class="mt-1 w-32 border rounded p-2"></label>
+      </fieldset>
+      <!-- Section 7 -->
+      <fieldset class="border p-4 rounded"><legend class="font-semibold">7. Ocena zastawek</legend>
+        <div class="mt-4"><h3 class="font-semibold">Zastawka mitralna</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+            <label class="block text-sm">Regurgitacja<br><select name="mitralRegurg" class="mt-1 w-full border rounded p-2"><option value="">-</option><option>łagodna</option><option>umiarkowana</option><option>ciężka</option></select></label>
+            <label class="block text-sm">VC [cm²]<br><input name="mitralVC" type="number" step="any" class="mt-1 w-full border rounded p-2"></label>
+            <label class="block text-sm">PISA [mm]<br><input name="mitralPISA" type="number" step="any" class="mt-1 w-full border rounded p-2"></label>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+            <label class="block text-sm">ERO [cm²]<br><input name="mitralERO" type="number" step="any" class="mt-1 w-full border rounded p-2"></label>
+            <label class="block text-sm">E/A ratio<br><input name="mitralEAratio" type="text" class="mt-1 w-full border rounded p-2"></label>
+            <label class="block text-sm">MxPG [mmHg]<br><input name="mitralMxPG" type="number" step="any" class="mt-1 w-full border rounded p-2"></label>
+          </div>
+          <label class="block text-sm mt-2">MnPG [mmHg]<br><input name="mitralMnPG" type="number" step="any" class="mt-1 w-full border rounded p-2"></label>
+        </div>
+        <div class="mt-6"><h3 class="font-semibold">Zastawka aortalna</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+            <label class="block text-sm">Morfologia<br><select name="aorticMorphology" class="mt-1 w-full border rounded p-2"><option value="">-</option><option>trójpłatkowa</option><option>dwupłatkowa</option></select></label>
+            <label class="block text-sm">Stenoza/Regurgitacja<br><select name="aorticRegSten" class="mt-1 w-full border rounded p-2"><option value="">-</option><option>łagodna</option><option>umiarkowana</option><option>ciężka</option></select></label>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-2">
+            <label class="block text-sm">VC [cm²]<br><input name="aorticVC" type="number" step="any" class="mt-1 w-full border rounded p-2"></label>
+            <label class="block text-sm">PHT [ms]<br><input name="aorticPHT" type="number" step="any" class="mt-1 w-full border rounded p-2"></label>
+            <label class="block text-sm">Vmax [m/s]<br><input name="aorticVmax" type="number" step="any" class="mt-1 w-full border rounded p-2"></label>
+            <label class="block text-sm">Pmax [mmHg]<br><input name="aorticPmax" type="number" step="any" class="mt-1 w-full border rounded p-2"></label>
+          </div>
+        </div>
+        <div class="mt-6"><h3 class="font-semibold">Zastawka trójdzielna</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+            <label class="block text-sm">Regurgitacja<br><select name="tricuspidRegurg" class="mt-1 w-full border rounded p-2"><option value="">-</option><option>łagodna</option><option>umiarkowana</option><option>ciężka</option></select></label>
+            <label class="block text-sm">TR Vmax [m/s]<br><input name="tricuspidVmax" type="number" step="any" class="mt-1 w-full border rounded p-2"></label>
+          </div>
+          <label class="block text-sm mt-2">Pmax [mmHg]<br><input name="tricuspidPmax" type="number" step="any" class="mt-1 w-full border rounded p-2"></label>
+        </div>
+      </fieldset>
+      <!-- Section 8 -->
+      <fieldset class="border p-4 rounded"><legend class="font-semibold">8. Osierdzie</legend>
+        <div class="flex items-center mt-4"><input type="checkbox" name="pericardEffusion" class="form-checkbox"><label class="ml-2 text-sm">Płyn w osierdziu</label></div>
+        <label class="block text-sm mt-4">Uwagi<br><textarea name="pericardNotes" rows="2" class="mt-1 w-full border rounded p-2"></textarea></label>
+      </fieldset>
+      <!-- Section 9 -->
+      <fieldset class="border p-4 rounded"><legend class="font-semibold">9. Uwagi końcowe i rekomendacje</legend>
+        <textarea name="remarks" rows="3" class="mt-1 w-full border rounded p-2"></textarea>
+      </fieldset>
+      <!-- Buttons -->
+      <div class="flex gap-4 mt-6"><button type="button" id="exportCsv" class="bg-blue-600 text-white px-4 py-2 rounded">Eksportuj CSV</button><button type="button" id="exportDocx" class="bg-green-600 text-white px-4 py-2 rounded">Eksportuj DOCX</button></div>
+    </form>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docx@7.3.0/build/docx.umd.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script>
+    const dims = [
+      {key:'LVEDd (mm)',label:'LVEDd (mm)'},{key:'LVESd (mm)',label:'LVESd (mm)'},
+      {key:'IVSd (mm)',label:'IVSd (mm)'},{key:'LVPWd (mm)',label:'LVPWd (mm)'},
+      {key:'LA (mm)',label:'LA (mm)'},{key:'LAVI (ml/m2)',label:'LAVI (ml/m²)'},
+      {key:'RAA (cm2)',label:'RAA (cm²)'},{key:'RV (mm)',label:'RV (mm)'},
+    ];
+    const ves = [
+      {key:'Opuszka aorty (mm)',label:'Opuszka aorty (mm)'},
+      {key:'Aorta wstępująca (mm)',label:'Aorta wstępująca (mm)'},
+      {key:'Pień płucny (mm)',label:'Pień płucny (mm)'}
+    ];
+    const fields = [
+      'patientName','patientID','examDate','operator',
+      ...dims.map(d=>d.key),...ves.map(v=>v.key),
+      'EF (%)','EDV (ml)','ESV (ml)',
+      'segmentalPresent','segmentalDescription','TAPSE (mm)',
+      'mitralRegurg','mitralVC (cm2)','mitralPISA (mm)','mitralERO (cm2)',
+      'mitralEAratio','mitralMxPG (mmHg)','mitralMnPG (mmHg)',
+      'aorticMorphology','aorticRegSten','aorticVC (cm2)','aorticPHT (ms)',
+      'aorticVmax (m/s)','aorticPmax (mmHg)','tricuspidRegurg',
+      'tricuspidVmax (m/s)','tricuspidPmax (mmHg)',
+      'pericardEffusion','pericardNotes','remarks'
+    ];
+    const dimsContainer = document.getElementById('dims');
+    dims.forEach(d=>{const el=document.createElement('label');el.className='block text-sm';el.innerHTML=`${d.label}<br><input name="${d.key}" type="number" step="any" class="mt-1 w-full border rounded p-2">`;dimsContainer.appendChild(el);});
+    const vesContainer = document.getElementById('ves');
+    ves.forEach(v=>{const el=document.createElement('label');el.className='block text-sm';el.innerHTML=`${v.label}<br><input name="${v.key}" type="number" step="any" class="mt-1 w-full border rounded p-2">`;vesContainer.appendChild(el);});
+    function collect(){const d={};new FormData(document.getElementById('echoForm')).forEach((v,k)=>{d[k]=v});return d;}
+    document.getElementById('exportCsv').onclick=()=>{const data=collect();const rows=[fields,fields.map(f=>data[f]||'')];const csv=Papa.unparse(rows);const blob=new Blob([csv],{type:'text/csv'});saveAs(blob,`echo_${data['patientID']||'record'}.csv`);};
+    document.getElementById('exportDocx').onclick=async()=>{const {Document,Packer,Paragraph,Table,TableRow,TableCell,HeadingLevel} = docx; const data=collect(); const doc=new Document();doc.addSection({children:[new Paragraph({text:'Raport ECHO',heading:HeadingLevel.HEADING_1}),new Paragraph(`Pacjent: ${data['patientName']||''}`),new Paragraph(`ID: ${data['patientID']||''}`)]}); const rows=[new TableRow({children:[new TableCell({children:[new Paragraph('Parametr')]}),new TableCell({children:[new Paragraph('Wartość')]})]})]; fields.forEach(f=>{if(data[f]!==undefined){rows.push(new TableRow({children:[new TableCell({children:[new Paragraph(f)]}),new TableCell({children:[new Paragraph(data[f])]})]}));}}); const table=new Table({rows}); doc.addSection({children:[table,new Paragraph(`Data: ${new Date().toLocaleDateString()}`)]}); const blob=await Packer.toBlob(doc);saveAs(blob.slice(0,blob.size,'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),`echo_${data['patientID']||'form'}.docx`);};
+  </script>
+</body>
+</html>
