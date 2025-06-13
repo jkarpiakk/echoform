@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Formularz badania ECHO</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -14,17 +14,20 @@
   <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
 </head>
 <body class="bg-gray-50 text-gray-800 p-4">
-  <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+  <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
     <div class="p-6">
       <!-- Nagłówek -->
-      <header class="flex flex-col md:flex-row items-center mb-6">
-        <img src="logo_szpitala.png" alt="Logo szpitala" class="h-16 mr-4 mb-4 md:mb-0">
-        <div>
-          <h1 class="text-2xl font-bold">Klinika Kardiologii z Pododdziałem Ostrych Zespołów Wieńcowych</h1>
-          <p>Kliniczny Szpital Wojewódzki Nr 2 im. Św. Jadwigi Królowej w Rzeszowie</p>
-          <p>ul. Lwowska 60, 35-301 Rzeszów</p>
+      <header class="flex flex-col md:flex-row items-center mb-8">
+        <img src="logo_szpitala.png" alt="Logo szpitala" class="h-24 mr-6 mb-4 md:mb-0">
+        <div class="text-center md:text-left">
+          <h2 class="text-3xl font-bold">Klinika Kardiologii z Pododdziałem Ostrych Zespołów Wieńcowych</h2>
+          <p class="mt-1 text-lg">Kliniczny Szpital Wojewódzki Nr 2 im. Św. Jadwigi Królowej w Rzeszowie</p>
+          <p class="text-sm text-gray-600">ul. Lwowska 60, 35-301 Rzeszów</p>
         </div>
       </header>
+
+      <!-- Tytuł formularza -->
+      <h1 class="text-2xl md:text-3xl font-semibold text-center mb-8">Formularz badania echokardiograficznego</h1>
 
       <form id="echoForm" class="space-y-6">
         <!-- 1. Dane pacjenta -->
@@ -34,7 +37,7 @@
             <label class="block text-sm">Imię i nazwisko<br>
               <input name="patientName" type="text" class="mt-1 w-full border rounded p-2" required>
             </label>
-            <label class="block text-sm">PESEL / ID pacjenta<br>
+            <label class="block text-sm">PESEL / ID<br>
               <input name="patientID" type="text" class="mt-1 w-full border rounded p-2">
             </label>
             <label class="block text-sm">Wiek<br>
@@ -52,31 +55,29 @@
         <!-- 2. Wymiary jam serca -->
         <fieldset class="border p-4 rounded">
           <legend class="font-semibold">2. Wymiary jam serca (M-mode / 2D)</legend>
-          <div id="dims" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-            <!-- pola generowane w skrypcie -->
-          </div>
+          <div id="dims" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4"></div>
         </fieldset>
 
         <!-- 3. Średnice pni naczyniowych -->
         <fieldset class="border p-4 rounded">
           <legend class="font-semibold">3. Średnice pni naczyniowych</legend>
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-            <label class="block text-sm">Opuszka aorty (mm)<br>
+            <label class="block text-sm">Opuszka aorty [mm]<br>
               <input name="aorticRootDiameter" type="number" step="0.1" class="mt-1 w-full border rounded p-2">
             </label>
-            <label class="block text-sm">Aorta wstępująca (mm)<br>
+            <label class="block text-sm">Aorta wstępująca [mm]<br>
               <input name="aortaAscendingDiameter" type="number" step="0.1" class="mt-1 w-full border rounded p-2">
             </label>
-            <label class="block text-sm">Aorta zstępująca (mm)<br>
+            <label class="block text-sm">Aorta zstępująca [mm]<br>
               <input name="aorticDescendingDiameter" type="number" step="0.1" class="mt-1 w-full border rounded p-2">
             </label>
-            <label class="block text-sm">Pień płucny (mm)<br>
+            <label class="block text-sm">Pień płucny (MPA) [mm]<br>
               <input name="MPA" type="number" step="0.1" class="mt-1 w-full border rounded p-2">
             </label>
           </div>
         </fieldset>
 
-        <!-- 4. Objętości i EF -->
+        <!-- 4. Objętości i funkcja skurczowa -->
         <fieldset class="border p-4 rounded">
           <legend class="font-semibold">4. Objętości i funkcja skurczowa</legend>
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
@@ -234,7 +235,7 @@
 
         <!-- 9. Uwagi końcowe -->
         <fieldset class="border p-4 rounded">
-          <legend class="font-semibold">9. Uwagi końcowe i rekomendacje</legend>
+          <legend class="font-semibold">9. Uwagi końcowe i rekomendacje</legend>  
           <textarea name="remarks" rows="3" class="mt-1 w-full border rounded p-2"></textarea>
         </fieldset>
 
@@ -248,122 +249,121 @@
   </div>
 
   <script>
-    // Dodaj pola wymiary jam (z LAVI)
-    const dims = ['LVEDd (mm)','LVESd (mm)','IVSd (mm)','LVPWd (mm)','LA (mm)','LAVI (ml/m²)','RV (mm)'];
+    // Render dynamic dims (w tym LAVI)
+    const dimsList = [
+      'LVEDd (mm)', 'LVESd (mm)', 'IVSd (mm)', 'LVPWd (mm)',
+      'LA (mm)', 'LAVI (ml/m²)', 'RV (mm)'
+    ];
     const dimsContainer = document.getElementById('dims');
-    dims.forEach(k=>{
-      const l = document.createElement('label');
-      l.className = 'block text-sm';
-      l.innerHTML = `${k}<br><input name="${k}" type="number" step="0.1" class="mt-1 w-full border rounded p-2">`;
-      dimsContainer.appendChild(l);
+    dimsList.forEach(label => {
+      const wrapper = document.createElement('label');
+      wrapper.className = 'block text-sm';
+      wrapper.innerHTML = `${label}<br><input name="${label}" type="number" step="0.1" class="mt-1 w-full border rounded p-2">`;
+      dimsContainer.appendChild(wrapper);
     });
 
-    // Zbiera wszystkie dane
+    // Zbiera dane
     function collect() {
-      const fm = new FormData(document.getElementById('echoForm')), o={};
-      fm.forEach((v,k)=>o[k]=v);
-      return o;
+      const fm = new FormData(document.getElementById('echoForm')), data = {};
+      fm.forEach((v,k) => data[k] = v);
+      return data;
     }
 
     // Eksport CSV
-    document.getElementById('exportCsv').onclick = ()=>{
+    document.getElementById('exportCsv').onclick = () => {
       const d = collect();
-      // PapaParse unparse single object with header row
+      const safeName = d.patientName ? d.patientName.replace(/\s+/g, '_') : 'record';
+      const filename = `${safeName}_echo.csv`;
       const csv = Papa.unparse([d], { header: true, delimiter: ';' });
-      const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
-      saveAs(blob, `echo_${d.patientID||'record'}.csv`);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      saveAs(blob, filename);
     };
 
     // Eksport DOCX
-    document.getElementById('exportDocx').onclick = async ()=>{
+    document.getElementById('exportDocx').onclick = async () => {
       const d = collect();
-      // Pobierz logo jako base64
-      let logoData = '';
-      await fetch('logo_szpitala.png').then(r=>r.blob()).then(blob=>{
-        return new Promise(res=>{
-          const reader=new FileReader();
-          reader.onload=()=>res(reader.result);
-          reader.readAsDataURL(blob);
-        });
-      }).then(dataURI=>logoData=dataURI);
+      // get logo as base64
+      let logoURI = '';
+      await fetch('logo_szpitala.png')
+        .then(r => r.blob())
+        .then(b => new Promise(r => {
+          const fr = new FileReader();
+          fr.onload = () => r(fr.result);
+          fr.readAsDataURL(b);
+        }))
+        .then(u => logoURI = u);
 
-      // Buduj HTML
-      let html = `<html><head><meta charset="UTF-8"/></head><body>`;
-      html += `<table style="width:100%;border-bottom:1px solid #000"><tr>
-        <td style="width:80px"><img src="${logoData}" style="max-width:80px"/></td>
-        <td style="vertical-align:middle"><h1 style="margin:0;font-size:16pt">Klinika Kardiologii</h1>
-        <p style="margin:0">Szpital Wojewódzki NR 2, Rzeszów</p></td>
-      </tr></table><br/>`;
+      // build HTML report
+      let html = `<html><head><meta charset="UTF-8"/></head><body style="font-family:Arial,sans-serif;">`;
+      html += `
+        <div style="text-align:center;margin-bottom:20px;">
+          <img src="${logoURI}" style="height:80px;margin-bottom:10px;"/><br/>
+          <span style="font-size:16pt;font-weight:bold;">Klinika Kardiologii z Pododdziałem Ostrych Zespołów Wieńcowych</span><br/>
+          <span style="font-size:12pt;">Kliniczny Szpital Wojewódzki Nr 2 im. Św. Jadwigi Królowej w Rzeszowie</span><br/>
+          <span style="font-size:10pt;">ul. Lwowska 60, 35-301 Rzeszów</span>
+        </div>`;
 
-      // Dane pacjenta
+      // Patient data
       html += `<h2>Dane pacjenta</h2><table>`;
-      ['patientName','patientID','patientAge','examDate','operator']
-        .forEach(key=>{
-          if(d[key]) html+=`<tr><td><b>${key.replace(/([A-Z])/g,' $1')}</b></td><td>${d[key]}</td></tr>`;
-        });
-      html += `</table><br/>`;
-
-      // Wymiary jam
-      html += `<h2>Wymiary jam serca</h2><table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse">`;
-      dims.forEach(k=>{
-        if(d[k]) html+=`<tr><td>${k}</td><td>${d[k]}</td></tr>`;
+      ['patientName','patientID','patientAge','examDate','operator'].forEach(k => {
+        if (d[k]) html += `<tr><td><b>${k.replace(/([A-Z])/g,' $1')}</b></td><td>${d[k]}</td></tr>`;
       });
       html += `</table><br/>`;
 
-      // Średnice pni
-      html += `<h2>Średnice pni naczyniowych</h2><table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse">`;
+      // Dimensions
+      html += `<h2>Wymiary jam serca</h2><table border="1" cellpadding="4" cellspacing="0" style="border-collapse:collapse">`;
+      dimsList.forEach(label => {
+        if (d[label]) html += `<tr><td>${label}</td><td>${d[label]}</td></tr>`;
+      });
+      html += `</table><br/>`;
+
+      // Vessels
+      html += `<h2>Średnice pni naczyniowych</h2><table border="1" cellpadding="4" cellspacing="0" style="border-collapse:collapse">`;
       ['aorticRootDiameter','aortaAscendingDiameter','aorticDescendingDiameter','MPA']
-        .forEach(k=>{
-          if(d[k]) html+=`<tr><td>${k.replace(/([A-Z])/g,' $1')}</td><td>${d[k]}</td></tr>`;
+        .forEach(k => {
+          if (d[k]) html += `<tr><td>${k.replace(/([A-Z])/g,' $1')}</td><td>${d[k]}</td></tr>`;
         });
       html += `</table><br/>`;
 
-      // EF i ESV/EDV/TAPSE
-      html += `<h2>Funkcja skurczowa i TAPSE</h2><table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse">`;
-      ['EF','EDV','ESV','TAPSE'].forEach(k=>{
-        if(d[k]) html+=`<tr><td>${k}</td><td>${d[k]}</td></tr>`;
+      // EF/TAPSE
+      html += `<h2>Objętości i funkcja skurczowa</h2><table border="1" cellpadding="4" cellspacing="0" style="border-collapse:collapse">`;
+      ['EF','EDV','ESV','TAPSE'].forEach(k => {
+        if (d[k]) html += `<tr><td>${k}</td><td>${d[k]}</td></tr>`;
       });
       html += `</table><br/>`;
 
-      // Segmenty i osierdzie
-      if(d.segmentalPresent || d.segmentalDescription) {
-        html += `<h2>Segmenty</h2><p>Obecne: ${d.segmentalPresent?'Tak':'Nie'}</p>`;
-        if(d.segmentalDescription) html+=`<p>${d.segmentalDescription}</p>`;
+      // Segmenty & Osierdzie
+      if (d.segmentalPresent || d.segmentalDescription) {
+        html += `<h2>Odcinkowe zaburzenia kurczliwości</h2>`;
+        html += `<p><b>Obecne:</b> ${d.segmentalPresent ? 'Tak' : 'Nie'}</p>`;
+        if (d.segmentalDescription) html += `<p>${d.segmentalDescription}</p>`;
       }
-      if(d.pericardEffusion || d.pericardNotes) {
-        html += `<h2>Osierdzie</h2><p>Efuzja: ${d.pericardEffusion?'Tak':'Nie'}</p>`;
-        if(d.pericardNotes) html+=`<p>${d.pericardNotes}</p>`;
+      if (d.pericardEffusion || d.pericardNotes) {
+        html += `<h2>Osierdzie</h2>`;
+        html += `<p><b>Efuzja:</b> ${d.pericardEffusion ? 'Tak' : 'Nie'}</p>`;
+        if (d.pericardNotes) html += `<p>${d.pericardNotes}</p>`;
       }
 
-      // Ocena zastawek
-      html += `<h2>Ocena zastawek</h2><table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse">
-        <tr><th>Zastawka</th><th>Stenoza</th><th>Niedomykalność</th><th>VC</th><th>PISA</th><th>Pmax</th><th>Mmax</th><th>Vmax</th><th>Odległość [mm]</th></tr>`;
-
-      // Helper
-      const valve = (name, keys)=>{
-        const row = keys.map(k=>d[k]||'–');
-        html+=`<tr><td>${name}</td>${row.map(v=>`<td>${v}</td>`).join('')}</tr>`;
-      };
-
-      valve('Mitralna', [
-        'mitralStenosis','mitralRegurg','mitralVC','mitralPISA','mitralPmax','mitralMmax','mitralVmax',''
-      ]);
-      valve('Aortalna', [
-        'aorticStenosis','aorticRegurg','aorticVC','aorticPISA','aorticPmax','aorticMmax','aorticVmax',''
-      ]);
-      valve('Trójdzielna', [
-        'tricuspidStenosis','tricuspidRegurg','tricuspidVC','tricuspidPISA','tricuspidPmax','tricuspidMmax','tricuspidVmax','tricuspidAnnulusDistance'
-      ]);
-
+      // Valves
+      html += `<h2>Ocena zastawek</h2>
+        <table border="1" cellpadding="4" cellspacing="0" style="border-collapse:collapse">
+          <tr><th>Zastawka</th><th>Stenoza</th><th>Niedomykalność</th><th>VC</th><th>PISA</th><th>Pmax</th><th>Mmax</th><th>Vmax</th><th>Odległość [mm]</th></tr>`;
+      function row(name, keys) {
+        html += `<tr><td>${name}</td>` + keys.map(k => `<td>${d[k] || '–'}</td>`).join('') + `</tr>`;
+      }
+      row('Mitralna', ['mitralStenosis','mitralRegurg','mitralVC','mitralPISA','mitralPmax','mitralMmax','mitralVmax','']);
+      row('Aortalna', ['aorticStenosis','aorticRegurg','aorticVC','aorticPISA','aorticPmax','aorticMmax','aorticVmax','']);
+      row('Trójdzielna', ['tricuspidStenosis','tricuspidRegurg','tricuspidVC','tricuspidPISA','tricuspidPmax','tricuspidMmax','tricuspidVmax','tricuspidAnnulusDistance']);
       html += `</table><br/>`;
 
-      // Uwagi końcowe
-      if(d.remarks) html += `<h2>Uwagi końcowe</h2><p>${d.remarks}</p>`;
+      // Final remarks
+      if (d.remarks) html += `<h2>Uwagi końcowe</h2><p>${d.remarks}</p>`;
 
       html += `</body></html>`;
 
       const blob = htmlDocx.asBlob(html);
-      saveAs(blob, `echo_raport_${d.patientID||'form'}.docx`);
+      const safeName = d.patientName ? d.patientName.replace(/\s+/g, '_') : 'form';
+      saveAs(blob, `${safeName}_raport.docx`);
     };
   </script>
 </body>
